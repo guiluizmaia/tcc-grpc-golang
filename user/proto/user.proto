@@ -1,0 +1,22 @@
+syntax = "proto3";
+option go_package = "./pb";
+
+service UserService {
+  rpc CreateUser(User) returns (User) {}
+}
+
+message User {
+  string id = 1;
+  string name = 2;
+  string lastName = 3;
+  string age = 4;
+  string document = 5;
+  string address = 6;
+  string nationality = 7;
+  string motherName = 8;
+  string fatherName = 9;
+  string gender = 10;
+  string birthday = 11;
+  string email = 12;
+}
+

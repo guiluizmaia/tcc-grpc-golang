@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  server:
+    build: ./server/
+    volumes:
+      - ./server:/go/src
+    ports:
+      - "8080:8080"
+    networks:
+      - network-rest
+    # depends_on:
+    #   - user
+  
+  user:
+    build: ./user/
+    volumes:
+      - ./user:/go/src
+    networks:
+      - network-rest
+    depends_on:
+      - server
+
+networks:
+  network-rest:
+    driver: bridge
