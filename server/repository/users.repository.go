@@ -8,6 +8,10 @@ var users = []Structs.User{}
 
 type UsersRepository struct{}
 
+func NewUsersRepository() *UsersRepository {
+	return &UsersRepository{}
+}
+
 func (usersRepository UsersRepository) List() []Structs.User {
 	return users
 }
