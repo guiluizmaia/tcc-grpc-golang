@@ -1,19 +1,23 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"io/ioutil"
+	"context"
 	"log"
-	"net/http"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/guiluizmaia/tcc-grpc-golang/user/pb"
 	"google.golang.org/grpc"
 )
 
 func main() {
-	connection, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	amount := 205000
+	bytesRequest := int(0)
+	timeStart := time.Now()
+	success := 0
+	error := 0
+
+	connection, err := grpc.Dial("server:50051", grpc.WithInsecure())
 
 	if err != nil {
 		log.Fatalf("Could not connect to gRPC Server: %v", err)
@@ -21,44 +25,38 @@ func main() {
 
 	defer connection.Close()
 
-	amount := 70000
-	bytesRequest := int64(0)
-	timeStart := time.Now()
-	success := 0
-	error := 0
-
 	for i := 0; i < amount; i++ {
-		bodySend, _ := json.Marshal(map[string]string{
-			"id":          uuid.New().String(),
-			"name":        "nameFake",
-			"lastName":    "lastNameFake",
-			"age":         "50",
-			"document":    "33333333333",
-			"address":     "Rua X",
-			"nationality": "Nationality Fake",
-			"motherName":  "MotherNameFake",
-			"fatherName":  "FatherName",
-			"gender":      "Gender Fake",
-			"birthday":    "12/07/2000",
-			"email":       "test@test.com",
-		})
-		payload := bytes.NewBuffer(bodySend)
 
-		resp, err := http.Post("http://server:8080/", "application/json", payload)
+		client := pb.NewUserServiceClient(connection)
+
+		req := &pb.User{
+			Id:          uuid.New().String(),
+			Name:        "nameFake",
+			LastName:    "lastNameFake",
+			Age:         "50",
+			Document:    "33333333333",
+			Address:     "Rua X",
+			Nationality: "Nationality Fake",
+			MotherName:  "MotherNameFake",
+			FatherName:  "FatherName",
+			Gender:      "Gender Fake",
+			Birthday:    "12/07/2000",
+			Email:       "test@test.com",
+		}
+
+		res, err := client.CreateUser(context.Background(), req)
 
 		if err != nil {
 			error += 1
 			continue
 		}
 
-		body, _ := ioutil.ReadAll(resp.Body)
-
-		bytesRequest = resp.ContentLength
-
-		defer resp.Body.Close()
-		if body != nil {
+		if res != nil {
 			success += 1
 		}
+
+		bytesRequest = req.GetLen()
+
 	}
 	timeFinish := time.Now()
 	timeofRequests := timeFinish.Sub(timeStart)

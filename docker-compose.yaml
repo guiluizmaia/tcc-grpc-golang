@@ -9,8 +9,8 @@ services:
       - "8080:8080"
     networks:
       - network-rest
-    # depends_on:
-    #   - user
+    # # depends_on:
+    # #   - user
   
   user:
     build: ./user/

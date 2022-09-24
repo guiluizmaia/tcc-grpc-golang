@@ -71,6 +71,14 @@ func (*User) Descriptor() ([]byte, []int) {
 	return file_user_proto_rawDescGZIP(), []int{0}
 }
 
+func (x *User) GetLen() int {
+	if x != nil {
+		bytes, _ := x.Descriptor()
+		return len(bytes)
+	}
+	return 0
+}
+
 func (x *User) GetId() string {
 	if x != nil {
 		return x.Id
